@@ -6,14 +6,19 @@
                     <div class="col-span-2">
                         <div class="bg-white mb-6 rounded-xl drop-shadow-md py-3 px-6">
                             <div class="flex gap-4 max-w-full overflow-x-auto">
-                                <div v-for="index in 5">
-                                    <svg class="w-14 h-14 p-3 bg-blue-500 rounded-full text-white mx-auto"
+                                <div v-for="board in boards"
+                                    :key="board.id"
+                                    @click="handleChangeBoard(board)"
+                                    class="hover:cursor-pointer text-center">
+                                    <svg 
+                                    :style="{'background': board.color}"
+                                    :class="`w-14 h-14 p-3 rounded-full text-white mx-auto`"
                                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                         stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                                     </svg>
-                                    <label class="text-center text-md font-semibold text-yellow-600 mt-2">Pink</label>
+                                    <label class="text-md font-semibold text-yellow-600 mt-2"> {{ board.title }} </label>
                                 </div>
                             </div>
                         </div>
@@ -25,30 +30,7 @@
                             <p class="font-medium text-gray-600">0 coin</p>
                             <div class="mb-6">
                                 <h3 class="text-lg font-semibold text-gray-600 mt-6 my-3">Your board: Pink</h3>
-                                <table class="table-auto mx-auto text-center">
-                                    <tbody class="border-2 border-gray-600">
-                                        <tr>
-                                            <td class="bg-pink-500 text-white text-lg border px-4 py-3">3</td>
-                                            <td class="bg-pink-500 text-white text-lg border px-2 py-3">21</td>
-                                            <td class="bg-gray-100 text-lg border px-5 py-3"></td>
-                                            <td class="bg-pink-500 text-white text-lg border px-2 py-3">40</td>
-                                            <td class="bg-gray-100 text-lg border px-5 py-3"></td>
-                                            <td class="bg-pink-500 text-white text-lg border px-2 py-3">66</td>
-                                            <td class="bg-gray-100 text-lg border px-5 py-3"></td>
-                                            <td class="bg-pink-500 text-white text-lg border px-2 py-3">89</td>
-                                        </tr>
-                                        <tr v-for="index in 8">
-                                            <td class="bg-pink-500 text-white text-lg border px-4 py-3">1</td>
-                                            <td class="bg-pink-500 text-white text-lg border px-2 py-3">20</td>
-                                            <td class="bg-pink-500 text-white text-lg border px-2 py-3">30</td>
-                                            <td class="bg-pink-500 text-white text-lg border px-2 py-3">40</td>
-                                            <td class="bg-pink-500 text-white text-lg border px-2 py-3">50</td>
-                                            <td class="bg-pink-500 text-white text-lg border px-2 py-3">60</td>
-                                            <td class="bg-pink-500 text-white text-lg border px-2 py-3">70</td>
-                                            <td class="bg-pink-500 text-white text-lg border px-2 py-3">80</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <Board :boardNumber="selectedBoard" :calledNumbers="calledNumbers" :color="selectedColor"/>
                             </div>
                         </div>
 
@@ -80,21 +62,21 @@
                         </div>
                         <div
                             class="bg-white mb-6 rounded-xl drop-shadow-md text-9xl font-bold text-yellow-600 py-24 text-center">
-                            25
+                            {{ randomNumber }}
                         </div>
                         <div class="bg-white mb-6 rounded-xl drop-shadow-md py-3 px-6">
                             <div>
                                 <span class="float-right italic text-gray-400">Room owner only</span>
                                 <h3 class="font-semibold text-lg text-gray-600 mb-3">Game action </h3>
                                 <div class="mx-auto text-center">
-                                    <button class="rounded-full bg-orange-500 mx-1 text-white py-1 px-3">
+                                    <button @click="handleStopClear" class="rounded-full bg-orange-500 mx-1 text-white py-1 px-3">
                                         <svg class="w-5 h-5 mt-0.5 mr-2 float-left" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
 
                                         <span>Stop & Clear</span>
                                     </button>
-                                    <button class="rounded-full bg-green-500 mx-1 text-white py-1 px-4">
+                                    <button @click="handleNextNumber" class="rounded-full bg-green-500 mx-1 text-white py-1 px-4">
                                         <svg class="w-5 h-5 mt-0.5 mr-2 float-left" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.348a1.125 1.125 0 010 1.971l-11.54 6.347a1.125 1.125 0 01-1.667-.985V5.653z" />
                                         </svg>
@@ -104,12 +86,10 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold text-lg text-gray-600 mb-3">Called number</h3>
-                                <!-- <div class="flex flex-wrap">
-                                        <span class="bg-blue-400 rounded-full p-2 text-white mr-1 mt-1">30</span>
-                                    </div> -->
                                 <div class="flex flex-wrap h-auto max-h-52 overflow-y-auto">
-                                    <span v-for="index in 90" class="bg-blue-400 rounded-full py-1 px-3 text-white mr-1 mt-1">
-                                        {{ index }} </span>
+                                    <span v-for="index in calledNumbers" class="bg-blue-400 rounded-full py-1 px-3 text-white mr-1 mt-1">
+                                        {{ index }} 
+                                    </span>
                                 </div>        
                             </div>
                         </div>
@@ -119,3 +99,30 @@
         </div>
     </div>
 </template>
+<script setup>
+    import data from '@/data.json';
+
+    const boards = ref(data);
+    const selectedBoard = ref(boards.value[0] ? boards.value[0].numbers : []);
+    const selectedColor = ref(boards.value[0] ? boards.value[0].color : "");
+    const randomNumber = ref(0);
+    const calledNumbers = ref([]);
+
+    function handleNextNumber(){
+        let randomTemp = 0;
+        do{
+            randomTemp = Math.floor(Math.random() * 90 + 1);
+        }while(calledNumbers.value.indexOf(randomTemp) !== -1);
+
+        randomNumber.value = randomTemp;
+        calledNumbers.value.unshift(randomNumber.value);
+    }
+    function handleStopClear(){
+        randomNumber.value = 0;
+        calledNumbers.value = [];
+    }
+    function handleChangeBoard(targetBoard){
+        selectedBoard.value = targetBoard.numbers;
+        selectedColor.value = targetBoard.color;
+    }
+</script>
